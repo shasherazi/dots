@@ -48,3 +48,8 @@ pub fn save_config(config: &Config, filename: &str) -> Result<(), String> {
     std::fs::write(filename, toml_string).map_err(|e| e.to_string())?;
     Ok(())
 }
+
+pub fn load_packages(filename: &str) -> Result<Config, String> {
+    let content = std::fs::read_to_string(filename).map_err(|e| e.to_string())?;
+    toml::from_str(&content).map_err(|e| e.to_string())
+}
