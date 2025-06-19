@@ -1,0 +1,14 @@
+[[packages]]
+name = "alacritty"
+reason = "default terminal"
+tags = ["base", "terminal"]
+
+[[packages]]
+name = "acpi"
+reason = "for battery script"
+tags = ["base", "system", "utilities"]
+
+[[packages]]
+name = "kitty"
+reason = "ADD DETAILS HERE"
+tags = ["ADD TAGS HERE"]
