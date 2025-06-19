@@ -1,14 +1,19 @@
 [[packages]]
-name = "alacritty"
-reason = "default terminal"
-tags = ["base", "terminal"]
-
-[[packages]]
-name = "acpi"
-reason = "for battery script"
-tags = ["base", "system", "utilities"]
+name = "aaa"
+reason = "ADD DETAILS HERE"
+tags = ["ADD TAGS HERE"]
 
 [[packages]]
 name = "kitty"
 reason = "ADD DETAILS HERE"
-tags = ["ADD TAGS HERE"]
+tags = ["BADD TAGS HERE"]
+
+[[packages]]
+name = "alacritty"
+reason = "default terminal"
+tags = ["base", "terminal", "z"]
+
+[[packages]]
+name = "acpi"
+reason = "for battery script"
+tags = ["system", "utilities", "xase"]

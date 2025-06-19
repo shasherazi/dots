@@ -8,11 +8,11 @@ pub struct Package {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Config {
+pub struct Packages {
     pub packages: Vec<Package>,
 }
 
-pub fn install(package: &str, config: &mut Config) -> Result<(), String> {
+pub fn install(package: &str, config: &mut Packages) -> Result<(), String> {
     // Check if the package is already in the config, skip installation if it is
     if config.packages.iter().any(|p| p.name == package) {
         println!("Package {} is already installed, skipping.", package);
@@ -31,7 +31,7 @@ pub fn install(package: &str, config: &mut Config) -> Result<(), String> {
     Ok(())
 }
 
-pub fn uninstall(package: &str, config: &mut Config) -> Result<(), String> {
+pub fn uninstall(package: &str, config: &mut Packages) -> Result<(), String> {
     // Check if the package exists in the config
     if let Some(pos) = config.packages.iter().position(|p| p.name == package) {
         // Remove the package from the config
@@ -43,13 +43,42 @@ pub fn uninstall(package: &str, config: &mut Config) -> Result<(), String> {
     }
 }
 
-pub fn save_config(config: &Config, filename: &str) -> Result<(), String> {
-    let toml_string = toml::to_string(config).map_err(|e| e.to_string())?;
+pub fn save_packages(
+    packages: &mut Packages,
+    config: &AppConfig,
+    filename: &str,
+) -> Result<(), String> {
+    let toml_string;
+
+    for pkg in &mut packages.packages {
+        pkg.tags.sort();
+    }
+
+    match config.sort_by.as_str() {
+        "package_name" => {
+            packages.packages.sort_by(|a, b| a.name.cmp(&b.name));
+        }
+        "tags" => {
+            packages.packages.sort_by(|a, b| {
+                let a_tags = a.tags.join(",");
+                let b_tags = b.tags.join(",");
+                a_tags.cmp(&b_tags)
+            });
+        }
+        _ => {}
+    }
+
+    if config.pretty_print {
+        toml_string = toml::to_string_pretty(packages).map_err(|e| e.to_string())?;
+    } else {
+        toml_string = toml::to_string(packages).map_err(|e| e.to_string())?;
+    }
+
     std::fs::write(filename, toml_string).map_err(|e| e.to_string())?;
     Ok(())
 }
 
-pub fn load_packages(filename: &str) -> Result<Config, String> {
+pub fn load_packages(filename: &str) -> Result<Packages, String> {
     let content = std::fs::read_to_string(filename).map_err(|e| e.to_string())?;
     toml::from_str(&content).map_err(|e| e.to_string())
 }
