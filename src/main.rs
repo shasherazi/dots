@@ -11,10 +11,29 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Install a package
-    Install { package: String },
-    /// Uninstall a package
-    Uninstall { package: String },
+    Install {
+        package: String,
+    },
+    Uninstall {
+        package: String,
+    },
+    List {
+        #[arg(long)]
+        tag: Option<String>,
+    },
+    Info {
+        package: String,
+    },
+    Edit {
+        package: String,
+        #[arg(long)]
+        reason: Option<String>,
+        #[arg(long)]
+        tags: Option<String>,
+    },
+    Has {
+        package: String,
+    },
 }
 
 fn main() {
@@ -42,6 +61,63 @@ fn main() {
                 if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
                     eprintln!("Error saving configuration: {}", e);
                 }
+            }
+        }
+        Commands::List { tag } => {
+            if let Some(tag) = tag {
+                let filtered_packages: Vec<_> = packages
+                    .packages
+                    .iter()
+                    .filter(|p| p.tags.contains(&tag.to_string()))
+                    .collect();
+                for pkg in filtered_packages {
+                    println!("Package Name: {}", pkg.name);
+                    println!("Reason: {}", pkg.reason);
+                    println!("Tags: {:?}", pkg.tags);
+                    println!();
+                }
+            } else {
+                for pkg in &packages.packages {
+                    println!("Package Name: {}", pkg.name);
+                    println!("Reason: {}", pkg.reason);
+                    println!("Tags: {:?}", pkg.tags);
+                    println!();
+                }
+            }
+        }
+        Commands::Info { package } => {
+            if let Some(pkg) = packages.packages.iter().find(|p| p.name == *package) {
+                println!("Package Name: {}", pkg.name);
+                println!("Reason: {}", pkg.reason);
+                println!("Tags: {:?}", pkg.tags);
+            } else {
+                eprintln!("Package {} not found.", package);
+            }
+        }
+        Commands::Edit {
+            package,
+            reason,
+            tags,
+        } => {
+            if let Some(pkg) = packages.packages.iter_mut().find(|p| p.name == *package) {
+                if let Some(reason) = reason {
+                    pkg.reason = reason.clone();
+                }
+                if let Some(tags) = tags {
+                    pkg.tags = tags.split(',').map(|s| s.trim().to_string()).collect();
+                }
+                if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
+                    eprintln!("Error saving configuration: {}", e);
+                }
+            } else {
+                eprintln!("Package {} not found.", package);
+            }
+        }
+        Commands::Has { package } => {
+            if packages.packages.iter().any(|p| p.name == *package) {
+                println!("Package {} is installed.", package);
+            } else {
+                println!("Package {} is not installed.", package);
             }
         }
     }

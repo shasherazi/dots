@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::config::AppConfig;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Package {

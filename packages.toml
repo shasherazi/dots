@@ -1,9 +1,4 @@
 [[packages]]
-name = "aaa"
-reason = "ADD DETAILS HERE"
-tags = ["ADD TAGS HERE"]
-
-[[packages]]
 name = "kitty"
 reason = "ADD DETAILS HERE"
 tags = ["BADD TAGS HERE"]
