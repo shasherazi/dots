@@ -1,10 +1,11 @@
-use serde::{Deserialize, Serialize};
 use crate::config::AppConfig;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Package {
     pub name: String,
     pub reason: String,
+    pub category: String,
     pub tags: Vec<String>,
 }
 
@@ -24,11 +25,13 @@ pub fn install(package: &str, config: &mut Packages) -> Result<(), String> {
     config.packages.push(Package {
         name: package.to_string(),
         reason: "ADD DETAILS HERE".to_string(),
+        category: "ADD CATEGORY HERE".to_string(),
         tags: vec!["ADD TAGS HERE".to_string()],
     });
 
     // Simulate installation logic
     println!("Installing package: {}", package);
+    println!("Don't forget to add details, category, and tags for the package.");
     Ok(())
 }
 
@@ -59,12 +62,13 @@ pub fn save_packages(
         "package_name" => {
             packages.packages.sort_by(|a, b| a.name.cmp(&b.name));
         }
-        "tags" => {
-            packages.packages.sort_by(|a, b| {
-                let a_tags = a.tags.join(",");
-                let b_tags = b.tags.join(",");
-                a_tags.cmp(&b_tags)
-            });
+        "category" => {
+            packages
+                .packages
+                .sort_by(|a, b| match a.category.cmp(&b.category) {
+                    std::cmp::Ordering::Equal => a.name.cmp(&b.name),
+                    other => other,
+                });
         }
         _ => {}
     }

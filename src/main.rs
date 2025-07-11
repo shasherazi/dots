@@ -29,6 +29,8 @@ enum Commands {
         #[arg(long)]
         reason: Option<String>,
         #[arg(long)]
+        category: Option<String>,
+        #[arg(long)]
         tags: Option<String>,
     },
     Has {
@@ -97,6 +99,7 @@ fn main() {
         Commands::Edit {
             package,
             reason,
+            category,
             tags,
         } => {
             if let Some(pkg) = packages.packages.iter_mut().find(|p| p.name == *package) {
@@ -105,6 +108,9 @@ fn main() {
                 }
                 if let Some(tags) = tags {
                     pkg.tags = tags.split(',').map(|s| s.trim().to_string()).collect();
+                }
+                if let Some(category) = category {
+                    pkg.category = category.clone();
                 }
                 if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
                     eprintln!("Error saving configuration: {}", e);
@@ -125,6 +131,7 @@ fn main() {
     for pkg in &packages.packages {
         println!("Package Name: {}", pkg.name);
         println!("Reason: {}", pkg.reason);
+        println!("Category: {}", pkg.category);
         println!("Tags: {:?}", pkg.tags);
         println!();
     }

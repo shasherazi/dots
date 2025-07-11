@@ -1,14 +1,29 @@
 [[packages]]
-name = "kitty"
-reason = "ADD DETAILS HERE"
-tags = ["BADD TAGS HERE"]
-
-[[packages]]
 name = "alacritty"
 reason = "default terminal"
-tags = ["base", "terminal", "z"]
+category = "base"
+tags = ["terminal"]
 
 [[packages]]
-name = "acpi"
-reason = "for battery script"
-tags = ["system", "utilities", "xase"]
+name = "lxappearance"
+reason = "GTK theme manager"
+category = "xorg"
+tags = ["appearance", "customization"]
+
+[[packages]]
+name = "sxhkd"
+reason = "hotkey daemon"
+category = "bspwm"
+tags = ["system", "input"]
+
+[[packages]]
+name = "grim"
+reason = "screenshot tool for wayland"
+category = "wayland"
+tags = ["screenshot", "utilities"]
+
+[[packages]]
+name = "hyprland"
+reason = "window manager"
+category = "hyprland"
+tags = ["system", "window-manager"]
