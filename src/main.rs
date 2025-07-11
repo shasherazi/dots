@@ -14,6 +14,7 @@ enum Commands {
     Install {
         package: String,
     },
+    InstallAll,
     Uninstall {
         package: String,
     },
@@ -54,6 +55,36 @@ fn main() {
                 if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
                     eprintln!("Error saving configuration: {}", e);
                 }
+            }
+        }
+        Commands::InstallAll => {
+            let package_names: Vec<String> =
+                packages.packages.iter().map(|p| p.name.clone()).collect();
+            let joined = package_names.join(" ");
+
+            let command_template = &app_config.install_command;
+            let command_str = command_template.replace("{packages}", &joined);
+
+            let mut parts = command_str.split_whitespace();
+            if let Some(program) = parts.next() {
+                let args: Vec<&str> = parts.collect();
+                println!("Running: {} {:?}", program, args);
+
+                let status = std::process::Command::new(program).args(&args).status();
+
+                match status {
+                    Ok(status) if status.success() => {
+                        println!("Install command completed successfully.");
+                    }
+                    Ok(status) => {
+                        eprintln!("Install command failed with status: {}", status);
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to run install command: {}", e);
+                    }
+                }
+            } else {
+                eprintln!("Invalid install command in config.");
             }
         }
         Commands::Uninstall { package } => {
@@ -126,13 +157,5 @@ fn main() {
                 println!("Package {} is not installed.", package);
             }
         }
-    }
-
-    for pkg in &packages.packages {
-        println!("Package Name: {}", pkg.name);
-        println!("Reason: {}", pkg.reason);
-        println!("Category: {}", pkg.category);
-        println!("Tags: {:?}", pkg.tags);
-        println!();
     }
 }

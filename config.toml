@@ -1,2 +1,3 @@
 pretty_print = false
 sort_by = "category"
+install_command = "yay -S --noconfirm --needed {packages}"

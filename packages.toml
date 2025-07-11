@@ -1,20 +1,20 @@
 [[packages]]
-name = "alacritty"
+name = "kitty"
 reason = "default terminal"
 category = "base"
 tags = ["terminal"]
 
 [[packages]]
-name = "lxappearance"
-reason = "GTK theme manager"
-category = "xorg"
-tags = ["appearance", "customization"]
-
-[[packages]]
 name = "sxhkd"
 reason = "hotkey daemon"
 category = "bspwm"
-tags = ["system", "input"]
+tags = ["input", "system"]
+
+[[packages]]
+name = "hyprland"
+reason = "window manager"
+category = "hyprland"
+tags = ["system", "window-manager"]
 
 [[packages]]
 name = "grim"
@@ -23,7 +23,7 @@ category = "wayland"
 tags = ["screenshot", "utilities"]
 
 [[packages]]
-name = "hyprland"
-reason = "window manager"
-category = "hyprland"
-tags = ["system", "window-manager"]
+name = "lxappearance"
+reason = "GTK theme manager"
+category = "xorg"
+tags = ["appearance", "customization"]
