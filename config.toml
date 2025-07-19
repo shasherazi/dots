@@ -1,3 +1,15 @@
 pretty_print = false
 sort_by = "category"
 install_command = "yay -S --noconfirm --needed {packages}"
+dotfiles_dir = "/home/shasherazi/notfiles"
+scripts_dir = "/home/shasherazi//dotfiles/scripts"
+
+[[symlinks]]
+source = "config/zsh/.zshrc"
+destination = ".zshrc"
+type = "file"
+
+[[symlinks]]
+source = "config/nvim"
+destination = ".config/nvim"
+type = "dir"

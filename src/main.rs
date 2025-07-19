@@ -37,6 +37,11 @@ enum Commands {
     Has {
         package: String,
     },
+    Run {
+        script_name: String,
+    },
+    Scripts,
+    Symlink,
 }
 
 fn main() {
@@ -106,6 +111,7 @@ fn main() {
                 for pkg in filtered_packages {
                     println!("Package Name: {}", pkg.name);
                     println!("Reason: {}", pkg.reason);
+                    println!("Category: {}", pkg.category);
                     println!("Tags: {:?}", pkg.tags);
                     println!();
                 }
@@ -113,6 +119,7 @@ fn main() {
                 for pkg in &packages.packages {
                     println!("Package Name: {}", pkg.name);
                     println!("Reason: {}", pkg.reason);
+                    println!("Category: {}", pkg.category);
                     println!("Tags: {:?}", pkg.tags);
                     println!();
                 }
@@ -122,6 +129,7 @@ fn main() {
             if let Some(pkg) = packages.packages.iter().find(|p| p.name == *package) {
                 println!("Package Name: {}", pkg.name);
                 println!("Reason: {}", pkg.reason);
+                println!("Category: {}", pkg.category);
                 println!("Tags: {:?}", pkg.tags);
             } else {
                 eprintln!("Package {} not found.", package);
@@ -155,6 +163,21 @@ fn main() {
                 println!("Package {} is installed.", package);
             } else {
                 println!("Package {} is not installed.", package);
+            }
+        }
+        Commands::Run { script_name } => {
+            if let Err(e) = config::run_script(&app_config, script_name) {
+                eprintln!("Error running script: {}", e);
+            }
+        }
+        Commands::Symlink => {
+            if let Err(e) = config::run_symlinks(&app_config) {
+                eprintln!("Symlink error: {}", e);
+            }
+        }
+        Commands::Scripts => {
+            if let Err(e) = config::list_scripts(&app_config) {
+                eprintln!("Error listing scripts: {}", e);
             }
         }
     }
