@@ -1,8 +1,7 @@
-pretty_print = false
 sort_by = "category"
 install_command = "yay -S --noconfirm --needed {packages}"
 dotfiles_dir = "/home/shasherazi/notfiles"
-scripts_dir = "/home/shasherazi//dotfiles/scripts"
+scripts_dir = "/home/shasherazi/dotfiles/scripts"
 
 [[symlinks]]
 source = "config/zsh/.zshrc"

@@ -13,11 +13,10 @@ pub struct Symlink {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AppConfig {
-    pub pretty_print: bool,
     pub sort_by: String,
     pub install_command: String,
     pub symlinks: Vec<Symlink>,
-    pub dotfiles_dir: String, // e.g., "/home/user/dotfiles"
+    pub dotfiles_dir: String,
     pub scripts_dir: String,
 }
 
@@ -36,7 +35,7 @@ pub fn run_symlinks(app_config: &AppConfig) -> Result<(), String> {
 
         if destination.exists() {
             return Err(format!(
-                "Destination already exists: {}. Skipping symlink for {}.",
+                "Destination already exists: {}. Skipping symlink for {}. Exiting.",
                 destination.display(),
                 link.destination
             ));

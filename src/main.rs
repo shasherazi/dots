@@ -21,6 +21,8 @@ enum Commands {
     List {
         #[arg(long)]
         tag: Option<String>,
+        #[arg(long)]
+        category: Option<String>,
     },
     Info {
         package: String,
@@ -101,12 +103,25 @@ fn main() {
                 }
             }
         }
-        Commands::List { tag } => {
+        Commands::List { tag, category } => {
             if let Some(tag) = tag {
                 let filtered_packages: Vec<_> = packages
                     .packages
                     .iter()
                     .filter(|p| p.tags.contains(&tag.to_string()))
+                    .collect();
+                for pkg in filtered_packages {
+                    println!("Package Name: {}", pkg.name);
+                    println!("Reason: {}", pkg.reason);
+                    println!("Category: {}", pkg.category);
+                    println!("Tags: {:?}", pkg.tags);
+                    println!();
+                }
+            } else if let Some(category) = category {
+                let filtered_packages: Vec<_> = packages
+                    .packages
+                    .iter()
+                    .filter(|p| p.category == *category)
                     .collect();
                 for pkg in filtered_packages {
                     println!("Package Name: {}", pkg.name);

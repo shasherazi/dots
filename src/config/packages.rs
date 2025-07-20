@@ -73,11 +73,7 @@ pub fn save_packages(
         _ => {}
     }
 
-    if config.pretty_print {
-        toml_string = toml::to_string_pretty(packages).map_err(|e| e.to_string())?;
-    } else {
-        toml_string = toml::to_string(packages).map_err(|e| e.to_string())?;
-    }
+    toml_string = toml::to_string(packages).map_err(|e| e.to_string())?;
 
     std::fs::write(filename, toml_string).map_err(|e| e.to_string())?;
     Ok(())
