@@ -23,7 +23,7 @@ The workflow i had in my mind was something like this
 
 ## Config
 
-There are two config files: `config.toml` and `packages.toml`. By default, they are located in `XDG_CONFIG_HOME/dots/` which is usually `~/.config/dots/`. If `XDG_CONFIG_HOME` is not set, it defaults to `~/.config/dots/`. You can change this location by using the `-c` or `--config` flag when running the `dots` command by providing a path to a directory that contains these two files.
+There are two config files: `config.toml` and `packages.toml`. By default, they are located in `XDG_CONFIG_HOME/dots/` which is usually `~/.config/dots/`. If `XDG_CONFIG_HOME` is not set, it defaults to `~/.config/dots/`. You can change this location by using the `-c` or `--config-dir` flag when running the `dots` command by providing a path to a directory that contains these two files.
 
 ### `packages.toml`
 
