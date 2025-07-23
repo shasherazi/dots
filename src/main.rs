@@ -1,10 +1,14 @@
 use clap::{Parser, Subcommand};
+use std::path::{Path, PathBuf};
 
 mod config;
 
 #[derive(Parser)]
 #[command(name = "dots")]
 struct Cli {
+    #[arg(short, long, global = true)]
+    config_dir: Option<String>,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -46,20 +50,47 @@ enum Commands {
     Symlink,
 }
 
+fn resolve_config_dir(cli_config_dir: &Option<String>) -> PathBuf {
+    if let Some(dir) = cli_config_dir {
+        return PathBuf::from(dir);
+    }
+    if let Some(xdg_config_home) = std::env::var_os("XDG_CONFIG_HOME") {
+        let xdg_path = Path::new(&xdg_config_home).join("dots");
+        if xdg_path.exists() {
+            return xdg_path;
+        }
+    }
+    if let Some(home) = dirs::home_dir() {
+        let home_path = home.join(".config/dots");
+        if home_path.exists() {
+            return home_path;
+        }
+    }
+    std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
+}
+
 fn main() {
-    const FILENAME: &str = "packages.toml";
     let cli = Cli::parse();
 
-    let mut packages =
-        config::load_packages("packages.toml").expect("Failed to load packages.toml");
-    let app_config = config::load_app_config("config.toml").expect("Failed to load config.toml");
+    let config_dir = resolve_config_dir(&cli.config_dir);
+    let config_path = config_dir.join("config.toml");
+    let packages_path = config_dir.join("packages.toml");
+
+    let mut packages = config::load_packages(packages_path.to_str().unwrap())
+        .expect("Failed to load packages.toml");
+    let app_config =
+        config::load_app_config(config_path.to_str().unwrap()).expect("Failed to load config.toml");
 
     match &cli.command {
         Commands::Install { package } => {
             if let Err(e) = config::install(package, &mut packages) {
                 eprintln!("Error installing package {}: {}", package, e);
             } else {
-                if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
+                if let Err(e) = config::save_packages(
+                    &mut packages,
+                    &app_config,
+                    packages_path.to_str().unwrap(),
+                ) {
                     eprintln!("Error saving configuration: {}", e);
                 }
             }
@@ -98,7 +129,11 @@ fn main() {
             if let Err(e) = config::uninstall(package, &mut packages) {
                 eprintln!("Error uninstalling package {}: {}", package, e);
             } else {
-                if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
+                if let Err(e) = config::save_packages(
+                    &mut packages,
+                    &app_config,
+                    packages_path.to_str().unwrap(),
+                ) {
                     eprintln!("Error saving configuration: {}", e);
                 }
             }
@@ -166,7 +201,11 @@ fn main() {
                 if let Some(category) = category {
                     pkg.category = category.clone();
                 }
-                if let Err(e) = config::save_packages(&mut packages, &app_config, FILENAME) {
+                if let Err(e) = config::save_packages(
+                    &mut packages,
+                    &app_config,
+                    packages_path.to_str().unwrap(),
+                ) {
                     eprintln!("Error saving configuration: {}", e);
                 }
             } else {
