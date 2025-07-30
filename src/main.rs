@@ -50,23 +50,36 @@ enum Commands {
     Symlink,
 }
 
+fn config_files_exist(dir: &Path) -> bool {
+    dir.join("config.toml").exists() && dir.join("packages.toml").exists()
+}
+
 fn resolve_config_dir(cli_config_dir: &Option<String>) -> PathBuf {
     if let Some(dir) = cli_config_dir {
-        return PathBuf::from(dir);
+        let path = PathBuf::from(dir);
+        if config_files_exist(&path) {
+            return path;
+        }
     }
     if let Some(xdg_config_home) = std::env::var_os("XDG_CONFIG_HOME") {
         let xdg_path = Path::new(&xdg_config_home).join("dots");
-        if xdg_path.exists() {
+        if config_files_exist(&xdg_path) {
             return xdg_path;
         }
     }
     if let Some(home) = dirs::home_dir() {
         let home_path = home.join(".config/dots");
-        if home_path.exists() {
+        if config_files_exist(&home_path) {
             return home_path;
         }
     }
-    std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
+    // Fallback: current directory, but only if files exist
+    let cwd = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
+    if config_files_exist(&cwd) {
+        return cwd;
+    }
+    // If nothing found, panic or return an error
+    panic!("Could not find config.toml and packages.toml in any standard location.");
 }
 
 fn main() {

@@ -34,11 +34,12 @@ pub fn run_symlinks(app_config: &AppConfig) -> Result<(), String> {
         let destination = home_dir.join(&link.destination);
 
         if destination.exists() {
-            return Err(format!(
+            eprintln!(
                 "Destination already exists: {}. Skipping symlink for {}. Exiting.",
                 destination.display(),
                 link.destination
-            ));
+            );
+            continue;
         }
 
         println!(
@@ -47,7 +48,7 @@ pub fn run_symlinks(app_config: &AppConfig) -> Result<(), String> {
             destination.display()
         );
         unix_fs::symlink(&source, &destination)
-            .map_err(|e| format!("Failed to create symlink: {}", e))?;
+            .map_err(|e| format!("Failed to create symlink for {}: {}", link.destination, e))?;
     }
     Ok(())
 }
